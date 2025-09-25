@@ -1,0 +1,308 @@
+// API Configuration - UPDATE THIS WITH YOUR GOOGLE APPS SCRIPT URL
+const API_URL = 'https://script.google.com/macros/s/AKfycbxSXMdjclBwUsEgSOr2AE-_agVXePHbTOww4qqBAKDDNW3EYMM_I2Nj0DqxFRElMiDL/exec';
+
+// DOM Elements
+const censusForm = document.getElementById('censusForm');
+const membersContainer = document.getElementById('members-container');
+const childrenContainer = document.getElementById('children-container');
+const addMemberBtn = document.getElementById('add-member-btn');
+const addChildBtn = document.getElementById('add-child-btn');
+const successMessage = document.getElementById('success-message');
+
+// Templates
+const memberTemplate = document.getElementById('member-template');
+const childTemplate = document.getElementById('child-template');
+
+// Initialize the form with one member and one child
+document.addEventListener('DOMContentLoaded', function() {
+    addMemberForm();
+    addChildForm();
+    
+    // Add event listeners for dynamic form interactions
+    addMemberBtn.addEventListener('click', addMemberForm);
+    addChildBtn.addEventListener('click', addChildForm);
+    
+    // Form submission
+    censusForm.addEventListener('submit', handleFormSubmit);
+});
+
+// Add a new member form
+function addMemberForm() {
+    const memberClone = memberTemplate.content.cloneNode(true);
+    const memberForm = memberClone.querySelector('.member-form');
+    
+    // Add event listeners for conditional fields
+    setupMemberFormEvents(memberForm);
+    
+    membersContainer.appendChild(memberForm);
+}
+
+// Setup event listeners for member form conditional fields
+function setupMemberFormEvents(memberForm) {
+    const baptismSelect = memberForm.querySelector('.member-baptised');
+    const communionSelect = memberForm.querySelector('.member-firstCommunion');
+    const confirmationSelect = memberForm.querySelector('.member-confirmation');
+    const maritalSelect = memberForm.querySelector('.member-maritalStatus');
+    const dikabeloSelect = memberForm.querySelector('.member-dikabelo');
+    
+    baptismSelect.addEventListener('change', function() {
+        const baptismDetails = memberForm.querySelector('.baptism-details');
+        baptismDetails.classList.toggle('hidden', this.value !== 'Yes');
+    });
+    
+    communionSelect.addEventListener('change', function() {
+        const communionDetails = memberForm.querySelector('.communion-details');
+        communionDetails.classList.toggle('hidden', this.value !== 'Yes');
+    });
+    
+    confirmationSelect.addEventListener('change', function() {
+        const confirmationDetails = memberForm.querySelector('.confirmation-details');
+        confirmationDetails.classList.toggle('hidden', this.value !== 'Yes');
+    });
+    
+    maritalSelect.addEventListener('change', function() {
+        const maritalDetails = memberForm.querySelector('.marital-details');
+        maritalDetails.classList.toggle('hidden', this.value !== 'Married');
+    });
+    
+    dikabeloSelect.addEventListener('change', function() {
+        const dikabeloDetails = memberForm.querySelector('.dikabelo-details');
+        dikabeloDetails.classList.toggle('hidden', this.value !== 'Yes');
+    });
+    
+    // Remove button functionality
+    const removeBtn = memberForm.querySelector('.remove-btn');
+    removeBtn.addEventListener('click', function() {
+        if (membersContainer.children.length > 1) {
+            memberForm.remove();
+        } else {
+            alert('At least one member is required.');
+        }
+    });
+}
+
+// Add a new child form
+function addChildForm() {
+    const childClone = childTemplate.content.cloneNode(true);
+    const childForm = childClone.querySelector('.child-form');
+    
+    // Add event listeners for conditional fields
+    setupChildFormEvents(childForm);
+    
+    childrenContainer.appendChild(childForm);
+}
+
+// Setup event listeners for child form conditional fields
+function setupChildFormEvents(childForm) {
+    const baptismSelect = childForm.querySelector('.child-baptised');
+    const communionSelect = childForm.querySelector('.child-firstCommunion');
+    const confirmationSelect = childForm.querySelector('.child-confirmation');
+    
+    baptismSelect.addEventListener('change', function() {
+        const baptismDetails = childForm.querySelector('.child-baptism-details');
+        baptismDetails.classList.toggle('hidden', this.value !== 'Yes');
+    });
+    
+    communionSelect.addEventListener('change', function() {
+        const communionDetails = childForm.querySelector('.child-communion-details');
+        communionDetails.classList.toggle('hidden', this.value !== 'Yes');
+    });
+    
+    confirmationSelect.addEventListener('change', function() {
+        const confirmationDetails = childForm.querySelector('.child-confirmation-details');
+        confirmationDetails.classList.toggle('hidden', this.value !== 'Yes');
+    });
+    
+    // Remove button functionality
+    const removeBtn = childForm.querySelector('.remove-btn');
+    removeBtn.addEventListener('click', function() {
+        childForm.remove();
+    });
+}
+
+// Handle form submission
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    // Validate required fields
+    if (!validateForm()) {
+        alert('Please fill in all required fields marked with *');
+        return;
+    }
+    
+    // Collect household data
+    const householdData = {
+        blockName: document.getElementById('blockName').value,
+        residentialAddress: document.getElementById('residentialAddress').value,
+        contactNo: document.getElementById('contactNo').value
+    };
+    
+    // Collect members data
+    const membersData = [];
+    const memberForms = document.querySelectorAll('.member-form');
+    
+    memberForms.forEach(form => {
+        const member = {
+            firstName: form.querySelector('.member-firstName').value,
+            lastName: form.querySelector('.member-lastName').value,
+            dateOfBirth: form.querySelector('.member-dateOfBirth').value,
+            catholic: form.querySelector('.member-catholic').value,
+            occupation: form.querySelector('.member-occupation').value,
+            churchActivities: form.querySelector('.member-churchActivities').value,
+            solidarityMinistry: form.querySelector('.member-solidarityMinistry').value,
+            leadership: form.querySelector('.member-leadership').value,
+            baptised: form.querySelector('.member-baptised').value,
+            dateOfBaptism: form.querySelector('.member-dateOfBaptism').value,
+            baptismRegistrationNo: form.querySelector('.member-baptismRegistrationNo').value,
+            baptismChurch: form.querySelector('.member-baptismChurch').value,
+            baptismLocation: form.querySelector('.member-baptismLocation').value,
+            firstCommunion: form.querySelector('.member-firstCommunion').value,
+            dateFirstCommunion: form.querySelector('.member-dateFirstCommunion').value,
+            firstCommunionChurch: form.querySelector('.member-firstCommunionChurch').value,
+            confirmation: form.querySelector('.member-confirmation').value,
+            dateOfConfirmation: form.querySelector('.member-dateOfConfirmation').value,
+            confirmationChurch: form.querySelector('.member-confirmationChurch').value,
+            maritalStatus: form.querySelector('.member-maritalStatus').value,
+            civilCourtMarriageDate: form.querySelector('.member-civilCourtMarriageDate').value,
+            churchMarriageDate: form.querySelector('.member-churchMarriageDate').value,
+            churchMarriagePlace: form.querySelector('.member-churchMarriagePlace').value,
+            divorced: form.querySelector('.member-divorced').value,
+            dikabelo: form.querySelector('.member-dikabelo').value,
+            dateLastDikabelo: form.querySelector('.member-dateLastDikabelo').value
+        };
+        membersData.push(member);
+    });
+    
+    // Collect children data
+    const childrenData = [];
+    const childForms = document.querySelectorAll('.child-form');
+    
+    childForms.forEach(form => {
+        const child = {
+            firstName: form.querySelector('.child-firstName').value,
+            lastName: form.querySelector('.child-lastName').value,
+            dateOfBirth: form.querySelector('.child-dateOfBirth').value,
+            age: form.querySelector('.child-age').value,
+            catholic: form.querySelector('.child-catholic').value,
+            churchActivities: form.querySelector('.child-churchActivities').value,
+            baptised: form.querySelector('.child-baptised').value,
+            dateOfBaptism: form.querySelector('.child-dateOfBaptism').value,
+            baptismRegistrationNo: form.querySelector('.child-baptismRegistrationNo').value,
+            baptismChurch: form.querySelector('.child-baptismChurch').value,
+            baptismLocation: form.querySelector('.child-baptismLocation').value,
+            firstCommunion: form.querySelector('.child-firstCommunion').value,
+            dateFirstCommunion: form.querySelector('.child-dateFirstCommunion').value,
+            firstCommunionChurch: form.querySelector('.child-firstCommunionChurch').value,
+            confirmation: form.querySelector('.child-confirmation').value,
+            dateOfConfirmation: form.querySelector('.child-dateOfConfirmation').value,
+            confirmationChurch: form.querySelector('.child-confirmationChurch').value
+        };
+        childrenData.push(child);
+    });
+    
+    // Prepare data for API
+    const submissionData = {
+        ...householdData,
+        members: JSON.stringify(membersData),
+        children: JSON.stringify(childrenData)
+    };
+    
+    // Submit to API
+    try {
+        showLoading(true);
+        const response = await submitToAPI(submissionData);
+        
+        if (response.success) {
+            showSuccessMessage();
+        } else {
+            throw new Error(response.message || 'Unknown error occurred');
+        }
+    } catch (error) {
+        alert('Error submitting form: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Validate form
+function validateForm() {
+    // Check household fields
+    if (!document.getElementById('blockName').value || 
+        !document.getElementById('residentialAddress').value ||
+        !document.getElementById('contactNo').value) {
+        return false;
+    }
+    
+    // Check member fields
+    const memberForms = document.querySelectorAll('.member-form');
+    for (let form of memberForms) {
+        if (!form.querySelector('.member-firstName').value ||
+            !form.querySelector('.member-lastName').value ||
+            !form.querySelector('.member-dateOfBirth').value ||
+            !form.querySelector('.member-catholic').value) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// Show loading state
+function showLoading(show) {
+    const submitBtn = document.querySelector('.btn-primary');
+    if (show) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+    } else {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Census Data';
+    }
+}
+
+// Show success message
+function showSuccessMessage() {
+    censusForm.classList.add('hidden');
+    successMessage.classList.remove('hidden');
+    
+    // Reset form after 5 seconds
+    setTimeout(() => {
+        censusForm.reset();
+        censusForm.classList.remove('hidden');
+        successMessage.classList.add('hidden');
+        
+        // Reset dynamic forms to one each
+        while (membersContainer.children.length > 1) {
+            membersContainer.lastChild.remove();
+        }
+        while (childrenContainer.children.length > 1) {
+            childrenContainer.lastChild.remove();
+        }
+        
+        // Re-initialize events for the remaining forms
+        setupMemberFormEvents(membersContainer.querySelector('.member-form'));
+        if (childrenContainer.querySelector('.child-form')) {
+            setupChildFormEvents(childrenContainer.querySelector('.child-form'));
+        }
+    }, 5000);
+}
+
+// API call function
+async function submitToAPI(data) {
+    const formData = new URLSearchParams();
+    
+    // Add all data to formData
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+    formData.append('action', 'addHousehold');
+    
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData
+    });
+    
+    return await response.json();
+}

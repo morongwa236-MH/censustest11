@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Lady of Fatima Shrine - Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Our Lady of Fatima Shrine</h1>
+            <h2>Admin Dashboard</h2>
+        </header>
+
+        <nav>
+            <button id="view-data-btn" class="btn-primary">View Household Data</button>
+            <button id="view-stats-btn" class="btn-secondary">View Statistics</button>
+        </nav>
+
+        <!-- Search Section -->
+        <section id="search-section" class="form-section">
+            <h3>Search Households</h3>
+            <div class="form-group">
+                <input type="text" id="search-input" placeholder="Search by block name or address">
+                <button id="search-btn" class="btn-primary">Search</button>
+                <button id="show-all-btn" class="btn-secondary">Show All</button>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="stats-section" class="form-section hidden">
+            <h3>Church Statistics</h3>
+            <div id="stats-container">
+                <!-- Statistics will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Household List Section -->
+        <section id="household-list-section" class="form-section">
+            <h3>Households</h3>
+            <div id="household-list">
+                <!-- Household list will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Household Details Section -->
+        <section id="household-details-section" class="form-section hidden">
+            <h3>Household Details</h3>
+            <div id="household-details">
+                <!-- Household details will be loaded here -->
+            </div>
+            <div class="form-actions">
+                <button id="edit-household-btn" class="btn-primary">Edit Household</button>
+                <button id="delete-household-btn" class="btn-secondary">Delete Household</button>
+                <button id="print-household-btn" class="btn-secondary">Print Household</button>
+                <button id="back-to-list-btn" class="btn-secondary">Back to List</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

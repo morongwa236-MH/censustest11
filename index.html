@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Lady of Fatima Shrine - Census Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Our Lady of Fatima Shrine</h1>
+            <h2>Household Census Form</h2>
+        </header>
+
+        <form id="censusForm">
+            <!-- Household Information Section -->
+            <section id="household-section" class="form-section">
+                <h3>Household Information</h3>
+                <div class="form-group">
+                    <label for="blockName">Block Name *</label>
+                    <input type="text" id="blockName" name="blockName" required>
+                </div>
+                <div class="form-group">
+                    <label for="residentialAddress">Residential Address *</label>
+                    <textarea id="residentialAddress" name="residentialAddress" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="contactNo">Contact Number *</label>
+                    <input type="tel" id="contactNo" name="contactNo" required>
+                </div>
+            </section>
+
+            <!-- Members Information Section -->
+            <section id="members-section" class="form-section">
+                <h3>Household Members</h3>
+                <div id="members-container">
+                    <!-- Member forms will be added here dynamically -->
+                </div>
+                <button type="button" id="add-member-btn" class="btn-secondary">Add Another Member</button>
+            </section>
+
+            <!-- Children Information Section -->
+            <section id="children-section" class="form-section">
+                <h3>Children in Household</h3>
+                <div id="children-container">
+                    <!-- Child forms will be added here dynamically -->
+                </div>
+                <button type="button" id="add-child-btn" class="btn-secondary">Add Another Child</button>
+            </section>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Submit Census Data</button>
+                <button type="reset" class="btn-secondary">Reset Form</button>
+            </div>
+        </form>
+
+        <div id="success-message" class="hidden">
+            <h3>Thank you for submitting your household information!</h3>
+            <p>Your data has been successfully recorded.</p>
+        </div>
+    </div>
+
+    <!-- Templates for dynamic form sections -->
+    <template id="member-template">
+        <div class="member-form">
+            <h4>Member Information <button type="button" class="remove-btn">Remove</button></h4>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" class="member-firstName" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" class="member-lastName" required>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth *</label>
+                    <input type="date" class="member-dateOfBirth" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Catholic? *</label>
+                    <select class="member-catholic" required>
+                        <option value="">Select</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Occupation</label>
+                    <input type="text" class="member-occupation">
+                </div>
+                <div class="form-group">
+                    <label>Church Activities</label>
+                    <input type="text" class="member-churchActivities">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Solidarity/Ministry</label>
+                    <input type="text" class="member-solidarityMinistry">
+                </div>
+                <div class="form-group">
+                    <label>Leadership</label>
+                    <input type="text" class="member-leadership">
+                </div>
+            </div>
+
+            <!-- Baptism Sub-section -->
+            <div class="subsection">
+                <h5>Baptism Information</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Baptised?</label>
+                        <select class="member-baptised">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="baptism-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of Baptism</label>
+                            <input type="date" class="member-dateOfBaptism">
+                        </div>
+                        <div class="form-group">
+                            <label>Registration Number</label>
+                            <input type="text" class="member-baptismRegistrationNo">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Church of Baptism</label>
+                            <input type="text" class="member-baptismChurch">
+                        </div>
+                        <div class="form-group">
+                            <label>Location of Church</label>
+                            <input type="text" class="member-baptismLocation">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- First Communion Sub-section -->
+            <div class="subsection">
+                <h5>First Communion Information</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>1st Communion?</label>
+                        <select class="member-firstCommunion">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="communion-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of 1st Communion</label>
+                            <input type="date" class="member-dateFirstCommunion">
+                        </div>
+                        <div class="form-group">
+                            <label>Church of 1st Communion</label>
+                            <input type="text" class="member-firstCommunionChurch">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Sub-section -->
+            <div class="subsection">
+                <h5>Confirmation Information</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Confirmed?</label>
+                        <select class="member-confirmation">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="confirmation-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of Confirmation</label>
+                            <input type="date" class="member-dateOfConfirmation">
+                        </div>
+                        <div class="form-group">
+                            <label>Church of Confirmation</label>
+                            <input type="text" class="member-confirmationChurch">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Marital Status Sub-section -->
+            <div class="subsection">
+                <h5>Marital Information</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Marital Status</label>
+                        <select class="member-maritalStatus">
+                            <option value="">Select</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Widow">Widow</option>
+                            <option value="Widower">Widower</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Divorced?</label>
+                        <select class="member-divorced">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="marital-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Civil Court Marriage Date</label>
+                            <input type="date" class="member-civilCourtMarriageDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Church Marriage Date</label>
+                            <input type="date" class="member-churchMarriageDate">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Church Marriage Place</label>
+                            <input type="text" class="member-churchMarriagePlace">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dikabelo Sub-section -->
+            <div class="subsection">
+                <h5>Dikabelo Information</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Dikabelo?</label>
+                        <select class="member-dikabelo">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dikabelo-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of Last Dikabelo</label>
+                            <input type="date" class="member-dateLastDikabelo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="child-template">
+        <div class="child-form">
+            <h4>Child Information <button type="button" class="remove-btn">Remove</button></h4>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" class="child-firstName" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" class="child-lastName" required>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth *</label>
+                    <input type="date" class="child-dateOfBirth" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" class="child-age" min="0" max="18">
+                </div>
+                <div class="form-group">
+                    <label>Catholic?</label>
+                    <select class="child-catholic">
+                        <option value="">Select</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Church Activities</label>
+                    <input type="text" class="child-churchActivities">
+                </div>
+            </div>
+
+            <!-- Baptism Sub-section -->
+            <div class="subsection">
+                <h5>Baptism Information</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Baptised?</label>
+                        <select class="child-baptised">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="child-baptism-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of Baptism</label>
+                            <input type="date" class="child-dateOfBaptism">
+                        </div>
+                        <div class="form-group">
+                            <label>Registration Number</label>
+                            <input type="text" class="child-baptismRegistrationNo">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Church of Baptism</label>
+                            <input type="text" class="child-baptismChurch">
+                        </div>
+                        <div class="form-group">
+                            <label>Location of Church</label>
+                            <input type="text" class="child-baptismLocation">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- First Communion Sub-section -->
+            <div class="subsection">
+                <h5>First Communion Information</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>1st Communion?</label>
+                        <select class="child-firstCommunion">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="child-communion-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of 1st Communion</label>
+                            <input type="date" class="child-dateFirstCommunion">
+                        </div>
+                        <div class="form-group">
+                            <label>Church of 1st Communion</label>
+                            <input type="text" class="child-firstCommunionChurch">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Sub-section -->
+            <div class="subsection">
+                <h5>Confirmation Information</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Confirmed?</label>
+                        <select class="child-confirmation">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="child-confirmation-details hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of Confirmation</label>
+                            <input type="date" class="child-dateOfConfirmation">
+                        </div>
+                        <div class="form-group">
+                            <label>Church of Confirmation</label>
+                            <input type="text" class="child-confirmationChurch">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
