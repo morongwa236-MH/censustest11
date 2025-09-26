@@ -371,4 +371,5 @@ function displayStatistics(stats) {
             '<p>No block statistics available.</p>'
         }
     `;
+
 }
