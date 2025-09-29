@@ -1,5 +1,5 @@
 // API Configuration - UPDATE THIS WITH YOUR GOOGLE APPS SCRIPT URL
-const API_URL = 'https://script.google.com/macros/s/AKfycbxSXMdjclBwUsEgSOr2AE-_agVXePHbTOww4qqBAKDDNW3EYMM_I2Nj0DqxFRElMiDL/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzu5QKzltIsLPhzQmXV0bd8_MGkxiEEN0TjfjdZZt4zG3KeQIPmwI8_3LcL66_uJlmp/exec';
 
 // DOM Elements
 const searchSection = document.getElementById('search-section');
@@ -373,3 +373,4 @@ function displayStatistics(stats) {
     `;
 
 }
+
