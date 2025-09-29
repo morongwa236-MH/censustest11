@@ -8,6 +8,9 @@ const childrenContainer = document.getElementById('children-container');
 const addMemberBtn = document.getElementById('add-member-btn');
 const addChildBtn = document.getElementById('add-child-btn');
 const successMessage = document.getElementById('success-message');
+const errorMessage = document.getElementById('error-message');
+const errorText = document.getElementById('error-text');
+const submitBtn = document.getElementById('submit-btn');
 
 // Templates
 const memberTemplate = document.getElementById('member-template');
@@ -15,7 +18,7 @@ const childTemplate = document.getElementById('child-template');
 
 // Initialize the form with one member and one child
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Form initialized');
+    console.log('Initializing form...');
     addMemberForm();
     addChildForm();
     
@@ -25,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Form submission
     censusForm.addEventListener('submit', handleFormSubmit);
+    
+    console.log('Form initialized successfully');
 });
 
 // Add a new member form
@@ -36,7 +41,7 @@ function addMemberForm() {
     setupMemberFormEvents(memberForm);
     
     membersContainer.appendChild(memberForm);
-    console.log('Member form added');
+    console.log('Added new member form');
 }
 
 // Setup event listeners for member form conditional fields
@@ -77,7 +82,7 @@ function setupMemberFormEvents(memberForm) {
     removeBtn.addEventListener('click', function() {
         if (membersContainer.children.length > 1) {
             memberForm.remove();
-            console.log('Member form removed');
+            console.log('Removed member form');
         } else {
             alert('At least one member is required.');
         }
@@ -93,7 +98,7 @@ function addChildForm() {
     setupChildFormEvents(childForm);
     
     childrenContainer.appendChild(childForm);
-    console.log('Child form added');
+    console.log('Added new child form');
 }
 
 // Setup event listeners for child form conditional fields
@@ -121,7 +126,7 @@ function setupChildFormEvents(childForm) {
     const removeBtn = childForm.querySelector('.remove-btn');
     removeBtn.addEventListener('click', function() {
         childForm.remove();
-        console.log('Child form removed');
+        console.log('Removed child form');
     });
 }
 
@@ -130,9 +135,12 @@ async function handleFormSubmit(e) {
     e.preventDefault();
     console.log('Form submission started');
     
+    // Hide any previous error messages
+    hideError();
+    
     // Validate required fields
     if (!validateForm()) {
-        alert('Please fill in all required fields marked with *');
+        showError('Please fill in all required fields marked with *');
         return;
     }
     
@@ -143,7 +151,7 @@ async function handleFormSubmit(e) {
         contactNo: document.getElementById('contactNo').value
     };
     
-    console.log('Household data collected:', householdData);
+    console.log('Household data:', householdData);
     
     // Collect members data
     const membersData = [];
@@ -179,7 +187,7 @@ async function handleFormSubmit(e) {
             dateLastDikabelo: form.querySelector('.member-dateLastDikabelo').value
         };
         membersData.push(member);
-        console.log(`Member ${index + 1} data collected:`, member);
+        console.log(`Member ${index + 1} data collected`);
     });
     
     // Collect children data
@@ -207,7 +215,7 @@ async function handleFormSubmit(e) {
             confirmationChurch: form.querySelector('.child-confirmationChurch').value
         };
         childrenData.push(child);
-        console.log(`Child ${index + 1} data collected:`, child);
+        console.log(`Child ${index + 1} data collected`);
     });
     
     // Prepare data for API
@@ -217,15 +225,12 @@ async function handleFormSubmit(e) {
         children: JSON.stringify(childrenData)
     };
     
-    console.log('Final submission data prepared');
+    console.log('Submitting data to API...');
     
     // Submit to API
     try {
         showLoading(true);
-        console.log('Sending data to API...');
-        
         const response = await submitToAPI(submissionData);
-        console.log('API Response:', response);
         
         if (response.success) {
             console.log('Form submitted successfully');
@@ -235,7 +240,7 @@ async function handleFormSubmit(e) {
         }
     } catch (error) {
         console.error('Submission error:', error);
-        alert('Error submitting form: ' + error.message);
+        showError('Error submitting form: ' + error.message);
     } finally {
         showLoading(false);
     }
@@ -244,44 +249,36 @@ async function handleFormSubmit(e) {
 // Validate form
 function validateForm() {
     // Check household fields
-    const blockName = document.getElementById('blockName').value;
-    const residentialAddress = document.getElementById('residentialAddress').value;
-    const contactNo = document.getElementById('contactNo').value;
-    
-    if (!blockName || !residentialAddress || !contactNo) {
-        console.log('Validation failed: Missing household fields');
+    if (!document.getElementById('blockName').value || 
+        !document.getElementById('residentialAddress').value ||
+        !document.getElementById('contactNo').value) {
         return false;
     }
     
     // Check member fields
     const memberForms = document.querySelectorAll('.member-form');
     for (let form of memberForms) {
-        const firstName = form.querySelector('.member-firstName').value;
-        const lastName = form.querySelector('.member-lastName').value;
-        const dateOfBirth = form.querySelector('.member-dateOfBirth').value;
-        const catholic = form.querySelector('.member-catholic').value;
-        
-        if (!firstName || !lastName || !dateOfBirth || !catholic) {
-            console.log('Validation failed: Missing member fields');
+        if (!form.querySelector('.member-firstName').value ||
+            !form.querySelector('.member-lastName').value ||
+            !form.querySelector('.member-dateOfBirth').value ||
+            !form.querySelector('.member-catholic').value) {
             return false;
         }
     }
     
-    console.log('Form validation passed');
     return true;
 }
 
 // Show loading state
 function showLoading(show) {
-    const submitBtn = document.querySelector('.btn-primary');
     if (show) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting...';
-        console.log('Loading state: ON');
+        censusForm.classList.add('loading');
     } else {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit Census Data';
-        console.log('Loading state: OFF');
+        censusForm.classList.remove('loading');
     }
 }
 
@@ -289,7 +286,9 @@ function showLoading(show) {
 function showSuccessMessage() {
     censusForm.classList.add('hidden');
     successMessage.classList.remove('hidden');
-    console.log('Success message shown');
+    hideError();
+    
+    console.log('Showing success message');
     
     // Reset form after 5 seconds
     setTimeout(() => {
@@ -306,7 +305,9 @@ function showSuccessMessage() {
         }
         
         // Re-initialize events for the remaining forms
-        setupMemberFormEvents(membersContainer.querySelector('.member-form'));
+        if (membersContainer.querySelector('.member-form')) {
+            setupMemberFormEvents(membersContainer.querySelector('.member-form'));
+        }
         if (childrenContainer.querySelector('.child-form')) {
             setupChildFormEvents(childrenContainer.querySelector('.child-form'));
         }
@@ -315,68 +316,58 @@ function showSuccessMessage() {
     }, 5000);
 }
 
-// API call function - FIXED with better error handling
+// Show error message
+function showError(message) {
+    errorText.textContent = message;
+    errorMessage.classList.remove('hidden');
+    console.error('Error:', message);
+}
+
+// Hide error message
+function hideError() {
+    errorMessage.classList.add('hidden');
+}
+
+// API call function
 async function submitToAPI(data) {
-    try {
-        console.log('Making API call to:', API_URL);
-        
-        const formData = new URLSearchParams();
-        
-        // Add all data to formData
-        for (const key in data) {
-            formData.append(key, data[key]);
-            console.log(`Added form data: ${key} = ${data[key]}`);
-        }
-        formData.append('action', 'addHousehold');
-        
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: formData
-        });
-        
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('API call successful, result:', result);
-        return result;
-        
-    } catch (error) {
-        console.error('API call failed:', error);
-        throw new Error(`Failed to connect to server: ${error.message}`);
+    console.log('Making API call to:', API_URL);
+    
+    const formData = new URLSearchParams();
+    
+    // Add all data to formData
+    for (const key in data) {
+        formData.append(key, data[key]);
     }
-}
-
-// Test API connection
-async function testAPIConnection() {
-    try {
-        console.log('Testing API connection...');
-        const response = await fetch(API_URL + '?action=getStats');
-        const data = await response.json();
-        console.log('API test result:', data);
-        return data.success;
-    } catch (error) {
-        console.error('API test failed:', error);
-        return false;
-    }
-}
-
-// Test connection on load
-window.addEventListener('load', function() {
-    console.log('Page loaded, testing API connection...');
-    testAPIConnection().then(success => {
-        if (success) {
-            console.log('API connection test: SUCCESS');
-        } else {
-            console.log('API connection test: FAILED');
-            alert('Warning: Cannot connect to server. Please check your API URL configuration.');
-        }
+    formData.append('action', 'addHousehold');
+    
+    console.log('Form data prepared:', Object.fromEntries(formData));
+    
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData
     });
-});
+    
+    console.log('API response status:', response.status);
+    
+    const result = await response.json();
+    console.log('API response:', result);
+    
+    return result;
+}
+
+// Utility function to check if element exists
+function elementExists(selector) {
+    return document.querySelector(selector) !== null;
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded');
+    });
+} else {
+    console.log('DOM already loaded');
+}
